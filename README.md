@@ -15,10 +15,12 @@ The code are based on the following third parties.
 ## Compliation:
 Platforms: Linux
 
-1. `mkdir build`
-2. `cd build`
-3. `cmake ..`
-4. `make -j4`
+```
+		mkdir build
+		cd build
+		cmake ..
+		make -j4
+```
 
 ## Usage
 `./nonrigid`
