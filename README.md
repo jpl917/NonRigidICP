@@ -16,10 +16,10 @@ The code are based on the following third parties.
 Platforms: Linux
 
 ```
-		mkdir build
-		cd build
-		cmake ..
-		make -j4
+mkdir build
+cd build
+cmake ..
+make -j4
 ```
 
 ## Usage
