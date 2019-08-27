@@ -11,6 +11,11 @@ The code are based on the following third parties.
 - dlib
 - Trimesh2
 
+## Dependency Install Steps:
+    ```
+    sudo apt-get install libopencv-dev liblz4-dev libpcl-dev libdlib-dev libsuitesparse-dev libomp-dev cmake python python-pip
+    ```
+
 
 ## Compliation:
 Platforms: Linux

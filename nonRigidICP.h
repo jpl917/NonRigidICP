@@ -33,7 +33,7 @@ using namespace trimesh;
 
 #define NUM_LANDMARKS 51
 
-#define THRESHOLD_DIST 10     //less
+#define THRESHOLD_DIST 20     //less
 #define THRESHOLD_NORM 0.5     //greater
 
 class MyTimer
@@ -229,7 +229,7 @@ public:
 			BB(i,2) = Dl[i](2)-mean_Dl[2];
 		}
 		
-		Eigen::Matrix3d W;  //= AA.transpose()*BB;
+		Eigen::Matrix3d W = Eigen::Matrix3d::Zero();  //= AA.transpose()*BB;
 		for(size_t i=0; i<Ul.size(); i++)
 		{
 			W += Eigen::Vector3d(AA(i,0),AA(i,1),AA(i,2)) * Eigen::Vector3d(BB(i,0),BB(i,1),BB(i,2)).transpose();
@@ -321,19 +321,18 @@ public:
 			m_kd_flann_index->knnSearch(query,indices,dists,1,flann::SearchParams(flann::FLANN_CHECKS_UNLIMITED));
 			
 			m_soft_corres[i]=std::make_pair(i,indices[0][0]);
-			
-			
-			//m_src->colors[i]=m_dst->colors[indices[0][0]];
-			
-			Eigen::Vector3d normal1(m_src->normals[i][0],m_src->normals[i][1],m_src->normals[i][2]);
-			Eigen::Vector3d normal2(m_dst->normals[indices[0][0]][0],m_dst->normals[indices[0][0]][1],m_dst->normals[indices[0][0]][2]);
-			
-			//cout<<normal1.dot(normal2)<<endl;
-			//if( dists[0][0] > THRESHOLD_DIST  || abs(normal1.dot(normal2))<=THRESHOLD_NORM )  
+
+			Eigen::Vector3d n1(m_src->normals[i][0],m_src->normals[i][1],m_src->normals[i][2]);
+			Eigen::Vector3d n2(m_dst->normals[indices[0][0]][0],m_dst->normals[indices[0][0]][1],m_dst->normals[indices[0][0]][2]);
+		
+		
+			//if( dists[0][0] > THRESHOLD_DIST  || abs(n1.dot(n2))<=THRESHOLD_NORM )  
 			//	m_weights[i]=0.0f;
 			
 			
 			//if(normal1.dot(normal2)<0) m_src->normals[i]*=-1;
+
+			if( m_dst->is_bdy(indices[0][0]) || m_src->is_bdy(i))  m_weights[i]=0.0f;
 			
 		}
 		
@@ -401,12 +400,6 @@ public:
 			{
 				int a = m_edges[i].first;
 				int b = m_edges[i].second;
-				
-				int t=0;
-				if(a>b)
-				{
-					t=a; a=b; b=t;
-				}
 
 				for (int j = 0; j < 3; j++) 
 				{
@@ -426,6 +419,7 @@ public:
 				trimesh::point xyz = m_src->vertices[i];
 
 				double weight = m_weights[i];
+				if(weight==0)  weight=1;
 
 				for (int j = 0; j < 3; ++j) 
 					W_D.push_back(Eigen::Triplet<double>(4*m + i, i*4 + j, weight * xyz[j]));
@@ -456,10 +450,21 @@ public:
 			for (int i = 0; i < n; ++i)
 			{
 				
-				int idx=m_soft_corres[i].second;
-				trimesh::point xyz=m_dst->vertices[idx];
+				int idx = 0;
+				trimesh::point xyz;
 
 				double weight = m_weights[i];
+				if(weight != 0)
+				{
+					idx = m_soft_corres[i].second;
+					xyz = m_dst->vertices[idx];
+				}
+				else
+				{
+					weight = 1;
+					idx = m_soft_corres[i].first;
+					xyz = m_src->vertices[idx];
+				}
 				
 				for (int j = 0; j < 3; j++)  
 					B(4*m + i, j) = weight * xyz[j];
@@ -468,7 +473,7 @@ public:
 			for(int i = 0; i < l; i++)
 			{
 				for (int j = 0; j < 3; j++) 
-					B(4*m + n + i, j) = Ul[i](j);
+					B(4*m + n + i, j) = beta * Ul[i](j);
 			}
 		
 			Eigen::SparseMatrix<double> AtA = Eigen::SparseMatrix<double>(A.transpose()) * A;
@@ -500,7 +505,6 @@ public:
 				trimesh::point xyz=m_src->vertices[i];
 				
 				Eigen::Vector4d point(xyz[0], xyz[1], xyz[2], 1.0f);
-				Eigen::Vector3d origin(xyz[0], xyz[1], xyz[2]);
 				Eigen::Vector3d result = Xt.block<3, 4>(0, 4*i) * point;
 			
 				for(int d=0; d<3; d++)
@@ -508,25 +512,16 @@ public:
 					m_src->vertices[i][d]=result[d];
 				}
 				
-				Eigen::Vector3d dist = result - origin;
-				
-				if(dist.norm()>10)
-				{
-					//m_vertices->SetPoint(i, origin[0]+dist[0]/2, origin[1]+dist[1]/2, origin[2]+dist[2]/2);
-					//m_vertices->SetPoint(i, origin[0], origin[1], origin[2]);
-				}
 				
 			}
 			
 			
 			for(size_t i=0; i<Dl.size(); i++)
 			{
-				Eigen::Vector4d point(Dl[i](0),Dl[i](1),Dl[i](2),1.0f);
-				Eigen::Vector3d result = Xt.block<3, 4>(0, 4*i) * point;
-				
-				Dl[i](0)=result[0];
-				Dl[i](1)=result[1];
-				Dl[i](2)=result[2];
+				int idx = Dl_Idx[i];
+				trimesh::point xyz= m_src->vertices[idx];
+				Dl[i]=Eigen::Vector3d(xyz[0],xyz[1],xyz[2]);
+			
 			}
 			
 			cout<<"X Change:"<<(X-TmpX).norm()<<endl<<endl;

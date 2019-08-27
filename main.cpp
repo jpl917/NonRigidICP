@@ -43,10 +43,10 @@ std::vector<int> loadLandmarksIdx(string filename)
 int main(int argc, char**argv)
 {
 	
-	std::string rootPath = "../demo1";
+	std::string rootPath = "../demo";
 	std::string imageFilename = rootPath+"/00000004.jpg";
 	std::string matrixPFilename = rootPath+"/00000004.txt";
-	std::string savePath = rootPath+"/result2/";
+	std::string savePath = rootPath+"/result/";
 	
 	std::string srcFilename = "../template/template.ply";   
 	std::string dstFilename = rootPath + "/poisson_mesh.ply";   
@@ -119,10 +119,9 @@ int main(int argc, char**argv)
 	//return 0;
 
 	double max_alpha=1000;
-	double min_alpha=10;
-	double beta = 0.0;
+	double min_alpha=50;
+	double beta = 10.0;
 	double gamma = 1.0;
-	//double epsilon=1e-4;
 	int step = 10;
 
 	Eigen::MatrixX3d X(4* src->vertices.size(),3);
