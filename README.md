@@ -14,7 +14,7 @@ The code are based on the following third parties.
 - Trimesh2 (included in 3rdparty)
 
 ## Install Steps:
-- 1. run blow command
+- 1.run blow command
 ```
 sudo apt-get install libopencv-dev liblz4-dev libpcl-dev libdlib-dev libsuitesparse-dev libomp-dev cmake python python-pip
 ```
@@ -25,13 +25,13 @@ sudo apt-get install libopencv-dev liblz4-dev libpcl-dev libdlib-dev libsuitespa
 //#error "Also make sure you have libx11-dev installed on your system"
 ```
 
-- 3. recomplie trimesh
+- 3.recomplie trimesh
 ```
 cd 3rdparty/trimesh2/
 make clean && make
 ```
 
-- 4. compliation:
+- 4.compliation:
 ```
 mkdir build
 cd build
