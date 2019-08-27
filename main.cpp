@@ -46,33 +46,16 @@ int main(int argc, char**argv)
 	std::string rootPath = "../demo";
 	std::string imageFilename = rootPath+"/00000004.jpg";
 	std::string matrixPFilename = rootPath+"/00000004.txt";
-	std::string savePath = rootPath+"/result/";
+	std::string savePath = "../result/";
 	
 	std::string srcFilename = "../template/template.ply";   
 	std::string dstFilename = rootPath + "/poisson_mesh.ply";   
 	std::string srcLandmarksFilename = "../template/source.txt";
 
+	string command;
+    	command = "mkdir -p ../result/";
+	system(command.c_str());	
 
-// 	std::string rootPath = "../demo3";
-// 	std::string imageFilename = rootPath+"/2.jpg";
-// 	std::string matrixPFilename = rootPath+"/00000002.txt";
-// 	std::string savePath = rootPath+"/result/";
-// 	
-// 	std::string srcFilename = "../template/template.ply";   
-// 	std::string dstFilename = rootPath + "/head-right.obj";  
-//	std::string srcLandmarksFilename = "../template/source.txt";
-	
-	
-// 	std::string rootPath = "../demo1";
-// 	std::string imageFilename = rootPath+"/00000004.jpg";
-// 	std::string matrixPFilename = rootPath+"/00000004.txt";
-// 	std::string savePath = rootPath+"/result4/";
-// 	
-// 	std::string srcFilename = "../demo3/head-right.obj";   
-// 	std::string dstFilename = rootPath + "/poisson_mesh.ply";   
-// 	std::string srcLandmarksFilename = "../demo3/emily-landmarks.txt"; 
-	
-	
 	MyTimer timer;
 	timer.start();
 	

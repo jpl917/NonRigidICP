@@ -23,14 +23,6 @@ else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-FIND_PACKAGE( OpenMP REQUIRED)
-if(OPENMP_FOUND)
-   message("OPENMP FOUND")
-   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif()
-
 
 FIND_PACKAGE( OpenMP REQUIRED)
 if(OPENMP_FOUND)
@@ -39,24 +31,15 @@ if(OPENMP_FOUND)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
-
-
-#set(SuiteSparse_DIR "/home/jpl/SuiteSparse/")
-#set(SuiteSparse_INCLUDE_DIRS "/home/jpl/SuiteSparse/include")
-#set(SuiteSparse_LIB_DIRS "/home/jpl/SuiteSparse/lib")
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
 find_package(OpenCV REQUIRED)
-#find_package(VTK REQUIRED)
 find_package(Eigen3 REQUIRED)
-#find_package(Boost REQUIRED)
 find_package(dlib REQUIRED)
 
 
 find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
-
-
 if(NOT SuiteSparse_FOUND)
         #set(SuiteSparse_VERBOSE ON)
         find_package(SuiteSparse REQUIRED) # 2nd: Use FindSuiteSparse.cmake module
@@ -68,16 +51,14 @@ endif()
 MESSAGE(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
 
 
-#INCLUDE (${VTK_USE_FILE})
+set(Trimesh2_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/3rdparty/trimesh2/include/)
+set(Trimesh2_LIB_DIRS ${PROJECT_SOURCE_DIR}/3rdparty/trimesh2/lib.Linux64/libtrimesh.a)
+
 
 include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${dlib_INCLUDE_DIRS})
-
-set(Trimesh2_DIR "/home/jpl/Programs/trimesh2")
-set(Trimesh2_INCLUDE_DIRS "/home/jpl/Programs/trimesh2/include/")
-set(Trimesh2_LIB_DIRS "/home/jpl/Programs/trimesh2/lib.Linux64/libtrimesh.a")
 include_directories(${Trimesh2_INCLUDE_DIRS})
 
 
