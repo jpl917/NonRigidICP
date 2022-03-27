@@ -489,7 +489,7 @@ public:
 			
 			
 			//temporal X
-			Eigen::MatrixX3d TmpX(3,4*n);
+			Eigen::MatrixX3d TmpX(4*n,3);
 			TmpX=X;
 			
 
